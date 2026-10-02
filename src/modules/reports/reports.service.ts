@@ -17,16 +17,31 @@ export const getReportsDashboard = async () => {
     timestamp: log.createdAt.toISOString()
   }));
 
-  // Dummy metrics for now, since we don't have deep historic analytics stored in simple tables
+  const totalSmsSent = await prisma.message.count({
+    where: { channel: 'SMS', direction: 'OUTBOUND' }
+  });
+
+  const emailTouchpoints = await prisma.message.count({
+    where: { channel: 'EMAIL', direction: 'OUTBOUND' }
+  });
+
+  const deals = await prisma.deal.findMany({
+    select: { status: true }
+  });
+
+  const totalDeals = deals.length;
+  const wonDeals = deals.filter(d => d.status === 'WON').length;
+  const conversionRate = totalDeals > 0 ? ((wonDeals / totalDeals) * 100).toFixed(1) + '%' : '0.0%';
+
   const metrics = {
-    totalSmsSent: '12,490',
-    totalSmsTrend: '↑ 14% vs last period',
-    emailTouchpoints: '8,120',
-    emailTrend: '↑ 8% vs last period',
-    avgResponseTime: '14 Mins',
-    avgResponseSubtext: 'AI bot responds in < 2s',
-    dealConversion: '4.2%',
-    dealConversionSubtext: 'High conversion in DFW North'
+    totalSmsSent: totalSmsSent.toString(),
+    totalSmsTrend: 'Live system aggregate',
+    emailTouchpoints: emailTouchpoints.toString(),
+    emailTrend: 'Live system aggregate',
+    avgResponseTime: 'N/A', // Complex metric to compute across disjoint tables, marking as N/A until proper tracking is in
+    avgResponseSubtext: 'System metrics',
+    dealConversion: conversionRate,
+    dealConversionSubtext: 'Total Deals Conversion Rate'
   };
 
   return { metrics, auditLogs: formattedLogs };
