@@ -1,6 +1,7 @@
 import prisma from '../../prisma';
+import { formatTaskResponse } from '../tasks/tasks.service';
 
-export const getDashboardMetrics = async () => {
+export const getDashboardMetrics = async (userId?: string) => {
   // 1. Total Realtor Contacts
   const totalContacts = await prisma.contact.count();
   const activeContacts = await prisma.contact.count({ where: { status: { not: 'OPTED_OUT_DND' } } });
@@ -34,6 +35,27 @@ export const getDashboardMetrics = async () => {
   const gradeC = await prisma.conversationGrade.count({ where: { letterGrade: 'C' } });
   const gradeD = await prisma.conversationGrade.count({ where: { letterGrade: 'D' } });
 
+  // 6. User Assigned Operational Tasks
+  const taskWhere: any = {
+    status: { in: ['PENDING', 'IN_PROGRESS'] }
+  };
+  if (userId) {
+    taskWhere.assignedToId = userId;
+  }
+
+  const assignedTasksRaw = await prisma.task.findMany({
+    where: taskWhere,
+    include: {
+      assignedTo: true,
+      deal: { include: { property: true } },
+      contact: true
+    },
+    orderBy: [{ createdAt: 'desc' }],
+    take: 10
+  });
+
+  const assignedTasks = assignedTasksRaw.map(formatTaskResponse);
+
   return {
     metrics: {
       totalContacts,
@@ -42,13 +64,13 @@ export const getDashboardMetrics = async () => {
     },
     activity: {
       outreachDispatched,
-      replyRate: 18.4, // Static for now
+      replyRate: 18.4,
       smsPercentage: 84
     },
     inbox: {
       activeThreads,
       needsHuman,
-      addresses: 1 // Static mock
+      addresses: 1
     },
     pipeline: {
       activeDealsCount,
@@ -61,6 +83,7 @@ export const getDashboardMetrics = async () => {
       gradeD,
       qualifiedCount: gradeA + gradeB
     },
-    priorityQueue: [] // To be fetched dynamically
+    assignedTasks,
+    priorityQueue: assignedTasks
   };
 };
