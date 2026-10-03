@@ -144,5 +144,4 @@ export const deleteTask = async (id: string) => {
     where: { id }
   });
   return { id, deleted: true };
->>>>>>> 6c96bb9cdfe35da59eac93a73e7d8b4e08c6ec9d
 };

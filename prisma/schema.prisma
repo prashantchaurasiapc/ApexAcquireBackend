@@ -97,6 +97,7 @@ enum IntegrationType {
   TWILIO
   MICROSOFT_365
   OPENAI
+  WEBHOOK
   OTHER
 }
 
@@ -552,4 +553,40 @@ model SystemSettings {
   gradingWeightAddress       Int      @default(35)
   gradingWeightPrice         Int      @default(20)
   updatedAt                  DateTime @updatedAt
+}
+
+// -----------------------------------------
+// 8. MARKETING & SOCIAL
+// -----------------------------------------
+
+enum SocialChannel {
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+}
+
+model SocialCredential {
+  id              String        @id @default(uuid())
+  channel         SocialChannel @unique
+  accountId       String?       
+  accessToken     String?
+  pageId          String?       
+  pageName        String?       
+  webhookUrl      String?
+  isConnected     Boolean       @default(false)
+  lastTestedAt    DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model MarketingPost {
+  id              String        @id @default(uuid())
+  content         String        @db.Text
+  channels        String        
+  status          String        @default("SCHEDULED") 
+  scheduledAt     DateTime?
+  publishedAt     DateTime?
+  createdBy       String?       
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

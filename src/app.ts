@@ -12,6 +12,7 @@ import tasksRoutes from './modules/tasks/tasks.routes';
 import reportsRoutes from './modules/reports/reports.routes';
 import templatesRoutes from './modules/templates/templates.routes';
 import settingsRoutes from './modules/settings/settings.routes';
+import marketingRoutes from './modules/marketing/marketing.routes';
 import { errorMiddleware } from './middleware/error.middleware';
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/v1/tasks', tasksRoutes);
 app.use('/api/v1/reports', reportsRoutes);
 app.use('/api/v1/templates', templatesRoutes);
 app.use('/api/v1/settings', settingsRoutes);
+app.use('/api/v1/marketing', marketingRoutes);
 
 // Health
 app.get('/health', (req, res) => {
