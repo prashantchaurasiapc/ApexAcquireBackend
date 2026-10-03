@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getDealsPipelineHandler } from './deals.controller';
+import { getDealsPipelineHandler, deleteDealHandler } from './deals.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 
 const router = Router();
@@ -7,5 +7,6 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/pipeline', getDealsPipelineHandler);
+router.delete('/:id', deleteDealHandler);
 
 export default router;
