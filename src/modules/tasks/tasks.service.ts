@@ -21,9 +21,20 @@ export const formatTaskResponse = (t: any) => ({
   createdAt: t.createdAt
 });
 
-export const getTasksList = async (assignedToId?: string) => {
+export const getTasksList = async (userId?: string, role?: string, assignedToId?: string) => {
   const where: any = {};
-  if (assignedToId) {
+
+  if (role === 'AGENT' || role === 'READ_ONLY') {
+    if (userId) {
+      where.assignedToId = userId;
+    }
+  } else if (role === 'MANAGER') {
+    if (assignedToId) {
+      where.assignedToId = assignedToId;
+    } else if (userId) {
+      where.assignedToId = userId;
+    }
+  } else if (assignedToId && assignedToId !== 'ALL') {
     where.assignedToId = assignedToId;
   }
 

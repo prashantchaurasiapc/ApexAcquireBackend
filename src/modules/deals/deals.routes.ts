@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { getDealsPipelineHandler } from './deals.controller';
+import { 
+  getDealsPipelineHandler, 
+  createDealHandler, 
+  updateDealStageHandler, 
+  updateDealAnalysisHandler 
+} from './deals.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 
 const router = Router();
@@ -7,5 +12,10 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/pipeline', getDealsPipelineHandler);
+router.get('/', getDealsPipelineHandler);
+router.post('/', createDealHandler);
+router.put('/:id/stage', updateDealStageHandler);
+router.put('/:id/analysis', updateDealAnalysisHandler);
+router.put('/:id', updateDealAnalysisHandler);
 
 export default router;
