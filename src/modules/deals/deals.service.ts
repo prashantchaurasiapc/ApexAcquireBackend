@@ -1,7 +1,14 @@
 import prisma from '../../prisma';
 
-export const getDealsPipeline = async () => {
+export const getDealsPipeline = async (user?: { id: string; role: string }) => {
+  const whereClause: any = {};
+  
+  if (user && user.role === 'AGENT') {
+    whereClause.ownerId = user.id;
+  }
+
   const deals = await prisma.deal.findMany({
+    where: whereClause,
     include: {
       property: true,
       contact: true,
@@ -273,3 +280,12 @@ export const updateDealAnalysis = async (dealId: string, data: any) => {
   return updatedDeal;
 };
 
+export const deleteDeal = async (id: string) => {
+  return await prisma.deal.update({
+    where: { id },
+    data: { 
+      status: 'LOST',
+      deletedAt: new Date()
+    }
+  });
+};

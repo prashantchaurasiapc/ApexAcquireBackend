@@ -3,7 +3,8 @@ import * as dealsService from './deals.service';
 
 export const getDealsPipelineHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await dealsService.getDealsPipeline();
+    const user = (req as any).user;
+    const data = await dealsService.getDealsPipeline(user);
     res.status(200).json({ success: true, data });
   } catch (error) {
     next(error);
@@ -36,6 +37,16 @@ export const updateDealAnalysisHandler = async (req: Request, res: Response, nex
     const id = String(req.params.id);
     const updated = await dealsService.updateDealAnalysis(id, req.body);
     res.status(200).json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteDealHandler = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = String(req.params.id);
+    await dealsService.deleteDeal(id);
+    res.status(200).json({ success: true, message: 'Deal archived successfully' });
   } catch (error) {
     next(error);
   }

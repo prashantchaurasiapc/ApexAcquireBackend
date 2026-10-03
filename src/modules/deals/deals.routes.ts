@@ -3,7 +3,8 @@ import {
   getDealsPipelineHandler, 
   createDealHandler, 
   updateDealStageHandler, 
-  updateDealAnalysisHandler 
+  updateDealAnalysisHandler,
+  deleteDealHandler 
 } from './deals.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 
@@ -17,5 +18,6 @@ router.post('/', createDealHandler);
 router.put('/:id/stage', updateDealStageHandler);
 router.put('/:id/analysis', updateDealAnalysisHandler);
 router.put('/:id', updateDealAnalysisHandler);
+router.delete('/:id', deleteDealHandler);
 
 export default router;
